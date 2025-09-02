@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SatyaLens - AI Fraud Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6683ea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .page-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .page-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-link {
+            background: none;
+            color: #667eea;
+            text-decoration: underline;
+            font-weight: normal;
+        }
+
+        .btn-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .app-card {
+            background: white;
+            border: 3px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .app-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .app-card.connected {
+            border-color: #2ed573;
+            background: #f0fff4;
+        }
+
+        .app-card.connected::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #2ed573;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .app-card.connected .app-icon {
+            color: #2ed573;
+        }
+
+        .app-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .app-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .protection-status {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .protection-status.active {
+            background: #d4edda;
+            border: 2px solid #2ed573;
+        }
+
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .status-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-description {
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d7ff;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .page-title h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            width: auto;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .monitoring-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .monitoring-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .activity-log {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+        }
+
+        .activity-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+        }
+
+        .activity-item.blocked {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .activity-content {
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .page-container {
+                padding: 20px;
+            }
+
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛡️ SatyaLens</div>
+            <div class="tagline">AI-Powered Fraud Detection & Protection</div>
+        </div>
+
+        <!-- Step 1: Initial Login/Signup Choice -->
+        <div id="welcomePage" class="page-container">
+            <div class="page-title">
+                <h2>Welcome to SatyaLens</h2>
+                <p>Protect yourself from fraud with AI-powered detection</p>
+            </div>
+            
+            <button class="btn" onclick="showSignupPage()">
+                <i class="fas fa-user-plus"></i> Create New Account
+            </button>
+            
+            <button class="btn btn-link" onclick="showSigninPage()">
+                Already have an account? Sign In
+            </button>
+        </div>
+
+        <!-- Step 2: Signup Page (Name, Email, Mobile) -->
+        <div id="signupPage" class="page-container hidden">
+            <button class="btn back-btn" onclick="showWelcomePage()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            <div class="page-title">
+                <h2>Create Account</h2>
+                <p>Enter your details to get started</p>
+            </div>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupMobile">Mobile Number</label>
+                    <input type="tel" id="signupMobile" placeholder="+91 9876543210" required>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Send OTP
+                </button>
+            </form>
+
+            <div id="signupAlert"></div>
+        </div>
+
+        <!-- Step 3: Signin Page (Mobile Only) -->
+        <div id="signinPage" class="page-container hidden">
+            <button class="btn back-btn" onclick="showWelcomePage()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            
+            <div class="page-title">
+                <h2>Sign In</h2>
+                <p>Enter your mobile number</p>
+            </div>
+
+            <form id="signinForm">
+                <div class="form-group">
+                    <label for="signinMobile">Mobile Number</label>
+                    <input type="tel" id="signinMobile" placeholder="+91 9876543210" required>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Send OTP
+                </button>
+            </form>
+
+            <div id="signinAlert"></div>
+        </div>
+
+        <!-- Step 4: OTP Verification -->
+        <div id="otpPage" class="page-container hidden">
+            <div class="page-title">
+                <h2>Verify OTP</h2>
+                <p>Enter the 6-digit code sent to <span id="otpMobileDisplay"></span></p>
+            </div>
+
+            <form id="otpForm">
+                <div class="form-group">
+                    <label for="otpInput">6-Digit OTP</label>
+                    <input type="text" id="otpInput" placeholder="123456" maxlength="6" required>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-check"></i> Verify OTP
+                </button>
+                
+                <button type="button" class="btn btn-secondary" onclick="resendOTP()">
+                    <i class="fas fa-redo"></i> Resend OTP
+                </button>
+            </form>
+
+            <div id="otpAlert"></div>
+        </div>
+
+        <!-- Step 5: App Connection Page -->
+        <div id="appConnectionPage" class="page-container app-container hidden">
+            <div class="page-title">
+                <h2>Connect Your Apps</h2>
+                <p>Choose which apps you want to protect from fraud</p>
+            </div>
+
+            <div class="protection-status" id="protectionStatus">
+                <div class="status-icon">🛡️</div>
+                <div class="status-text">Protection Inactive</div>
+                <div class="status-description">Connect at least one app to start fraud protection</div>
+            </div>
+
+            <div class="app-grid">
+                <div class="app-card" onclick="connectApp('whatsapp')">
+                    <div class="app-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="app-name">WhatsApp</div>
+                    <div class="app-description">Protect your WhatsApp messages from fraud and spam</div>
+                </div>
+
+                <div class="app-card" onclick="connectApp('messages')">
+                    <div class="app-icon">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <div class="app-name">SMS Messages</div>
+                    <div class="app-description">Scan incoming SMS for fraud attempts and scams</div>
+                </div>
+
+                <div class="app-card" onclick="connectApp('gallery')">
+                    <div class="app-icon">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div class="app-name">Gallery</div>
+                    <div class="app-description">Check photos and videos for fake or manipulated content</div>
+                </div>
+
+                <div class="app-card" onclick="connectApp('telegram')">
+                    <div class="app-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <div class="app-name">Telegram</div>
+                    <div class="app-description">Monitor Telegram messages for suspicious content</div>
+                </div>
+
+                <div class="app-card" onclick="connectApp('email')">
+                    <div class="app-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="app-name">Email</div>
+                    <div class="app-description">Detect phishing emails and malicious attachments</div>
+                </div>
+
+                <div class="app-card" onclick="connectApp('instagram')">
+                    <div class="app-icon">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <div class="app-name">Instagram</div>
+                    <div class="app-description">Protect against fake profiles and scam messages</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="connectedApps">0</div>
+                    <div class="stat-label">Connected Apps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="protectedMessages">0</div>
+                    <div class="stat-label">Messages Protected</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="threatsBlocked">0</div>
+                    <div class="stat-label">Threats Blocked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="protectionRate">0%</div>
+                    <div class="stat-label">Protection Rate</div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="showDashboard()" id="dashboardBtn" style="display: none;">
+                <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+            </button>
+
+            <div id="connectionAlert"></div>
+        </div>
+
+        <!-- Step 6: Main Dashboard -->
+        <div id="dashboardPage" class="page-container app-container hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <div>
+                    <h2>Protection Dashboard</h2>
+                    <p>Welcome back, <span id="userNameDisplay">User</span>!</p>
+                </div>
+                <button class="btn back-btn" onclick="logout()" style="background: #dc3545;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="protection-status active">
+                <div class="status-icon">✅</div>
+                <div class="status-text">Protection Active</div>
+                <div class="status-description">Your apps are being monitored for fraud attempts</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="dashConnectedApps">0</div>
+                    <div class="stat-label">Connected Apps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="dashProtectedMessages">247</div>
+                    <div class="stat-label">Messages Scanned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="dashThreatsBlocked">23</div>
+                    <div class="stat-label">Threats Blocked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="dashProtectionRate">93%</div>
+                    <div class="stat-label">Protection Rate</div>
+                </div>
+            </div>
+
+            <div class="monitoring-panel">
+                <div class="monitoring-title">
+                    <i class="fas fa-eye"></i> Real-time Monitoring
+                </div>
+                <div class="activity-log" id="activityLog">
+                    <div class="activity-item">
+                        <div class="activity-time">2 minutes ago</div>
+                        <div class="activity-content">✅ WhatsApp message from Mom - Safe</div>
+                    </div>
+                    <div class="activity-item blocked">
+                        <div class="activity-time">5 minutes ago</div>
+                        <div class="activity-content">🚫 SMS from unknown number - BLOCKED (Lottery scam detected)</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">12 minutes ago</div>
+                        <div class="activity-content">✅ Email from bank - Safe</div>
+                    </div>
+                    <div class="activity-item blocked">
+                        <div class="activity-time">18 minutes ago</div>
+                        <div class="activity-content">🚫 Telegram message - BLOCKED (Fake certificate offer)</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-time">25 minutes ago</div>
+                        <div class="activity-content">✅ Instagram message from friend - Safe</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="showAppConnectionPage()" style="margin-top: 20px;">
+                <i class="fas fa-plus"></i> Connect More Apps
+            </button>
+
+            <div id="dashboardAlert"></div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div class="loading" id="loadingScreen">
+            <div class="spinner"></div>
+            <p id="loadingText">Processing...</p>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentUser = null;
+        let currentMobile = '';
+        let connectedAppsData = [];
+        let isNewUser = false;
+
+        // Page navigation functions
+        function showWelcomePage() {
+            hideAllPages();
+            document.getElementById('welcomePage').classList.remove('hidden');
+        }
+
+        function showSignupPage() {
+            hideAllPages();
+            document.getElementById('signupPage').classList.remove('hidden');
+            isNewUser = true;
+        }
+
+        function showSigninPage() {
+            hideAllPages();
+            document.getElementById('signinPage').classList.remove('hidden');
+            isNewUser = false;
+        }
+
+        function showOTPPage(mobile) {
+            hideAllPages();
+            document.getElementById('otpPage').classList.remove('hidden');
+            document.getElementById('otpMobileDisplay').textContent = mobile;
+            currentMobile = mobile;
+        }
+
+        function showAppConnectionPage() {
+            hideAllPages();
+            document.getElementById('appConnectionPage').classList.remove('hidden');
+            updateConnectionStats();
+        }
+
+        function showDashboard() {
+            hideAllPages();
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            if (currentUser) {
+                document.getElementById('userNameDisplay').textContent = currentUser.name;
+            }
+            updateDashboardStats();
+            startRealTimeMonitoring();
+        }
+
+        function hideAllPages() {
+            const pages = ['welcomePage', 'signupPage', 'signinPage', 'otpPage', 'appConnectionPage', 'dashboardPage'];
+            pages.forEach(page => {
+                document.getElementById(page).classList.add('hidden');
+            });
+        }
+
+        function showLoading(text = 'Processing...') {
+            document.getElementById('loadingText').textContent = text;
+            document.getElementById('loadingScreen').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        // Form handlers
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const mobile = document.getElementById('signupMobile').value.trim();
+            
+            if (!name || !email || !mobile) {
+                showAlert('signupAlert', 'Please fill in all fields', 'danger');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showAlert('signupAlert', 'Please enter a valid email address', 'danger');
+                return;
+            }
+
+            if (!isValidMobile(mobile)) {
+                showAlert('signupAlert', 'Please enter a valid mobile number', 'danger');
+                return;
+            }
+
+            currentUser = { name, email, mobile };
+            
+            showLoading('Sending OTP...');
+            
+            // Backend Connection
+            async function handleSignup() {
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const mobile = document.getElementById('signupMobile').value;
+
+                if (!name || !email || !mobile) {
+                    showNotification('Please fill all fields', 'error');
+                    return;
+                }
+
+                try {
+                    // 🔴 CONNECT TO YOUR PYTHON BACKEND HERE
+                    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            full_name: name,
+                            email: email,
+                            mobile: mobile
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        currentUser = { name, email, mobile, isNewUser: true };
+                        showNotification('OTP sent to your mobile!', 'success');
+                        showOTPVerification();
+                    }  else {
+                        showNotification(data.detail || 'Registration failed', 'error');
+                    }
+                } catch (error) {
+                    console.error('Signup error:', error);
+                    showNotification('Network error. Please try again.', 'error');
+                }
+            }
+        
+
+            // DEMO CODE - Remove in production
+            setTimeout(() => {
+                hideLoading();
+                showAlert('signupAlert', 'OTP sent to your mobile number!', 'success');
+                setTimeout(() => {
+                    showOTPPage(mobile);
+                }, 1000);
+            }, 2000);
+        });
+
+        document.getElementById('signinForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const mobile = document.getElementById('signinMobile').value.trim();
+            
+            if (!mobile) {
+                showAlert('signinAlert', 'Please enter your mobile number', 'danger');
+                return;
+            }
+
+            if (!isValidMobile(mobile)) {
+                showAlert('signinAlert', 'Please enter a valid mobile number', 'danger');
+                return;
+            }
+
+            showLoading('Sending OTP...');
+            
+            // 🔴 BACKEND INTEGRATION NEEDED - Replace this demo code
+            // Call your Python backend API to send OTP for existing user
+            async function handleSignin() {
+                const mobile = document.getElementById('signinMobile').value;
+
+                if (!mobile) {
+                    showNotification('Please enter mobile number', 'error');
+                    return;
+                }
+
+                try {
+                // 🔴 CONNECT TO YOUR PYTHON BACKEND HERE
+                    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `username=${mobile}&password=temp_password`  // You'll need to modify this
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        currentUser = { mobile, isNewUser: false };
+                        showNotification('OTP sent to your mobile!', 'success');
+                        showOTPVerification();
+                    } else {
+                        showNotification(data.detail || 'Login failed', 'error');
+                    }
+                } catch (error) {
+                    console.error('Signin error:', error);
+                    showNotification('Network error. Please try again.', 'error');
+                }
+            }
+            
+            setTimeout(() => {
+                hideLoading();
+                showAlert('signinAlert', 'OTP sent to your mobile number!', 'success');
+                setTimeout(() => {
+                    showOTPPage(mobile);
+                }, 1000);
+            }, 2000);
+        });
+
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const otp = document.getElementById('otpInput').value.trim();
+            
+            if (!otp || otp.length !== 6) {
+                showAlert('otpAlert', 'Please enter a valid 6-digit OTP', 'danger');
+                return;
+            }
+
+            showLoading('Verifying OTP...');
+            
+            // 🔴 BACKEND INTEGRATION NEEDED - Replace this demo code
+            // Call your Python backend API to verify OTP
+         
+            async function handleOTPVerification() {
+                const otp = Array.from(document.querySelectorAll('.otp-input'))
+                    .map(input => input.value).join('');
+
+                if (otp.length !== 6) {
+                    showNotification('Please enter complete OTP', 'error');
+                    return;
+                }
+
+                try {
+                    // 🔴 CONNECT TO YOUR PYTHON BACKEND HERE
+                    const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            mobile: currentUser.mobile,
+                            otp: otp,
+                            is_new_user: currentUser.isNewUser
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Store authentication token
+                        localStorage.setItem('authToken', data.access_token);
+            
+                        currentUser = { ...currentUser, ...data.user };
+                        connectedApps = data.connected_apps || [];
+            
+                        showNotification('Login successful!', 'success');
+                        showAppSelection();
+                    } else {
+                        showNotification(data.detail || 'Invalid OTP', 'error');
+                    }
+                } catch (error) {
+                    console.error('OTP verification error:', error);
+                    showNotification('Network error. Please try again.', 'error');
+                }
+            }
+            
+            // DEMO CODE - Remove in production
+            if (otp !== '123456') {
+                hideLoading();
+                showAlert('otpAlert', 'Invalid OTP. Use 123456 for demo.', 'danger');
+                return;
+            }
+            
+            setTimeout(() => {
+                hideLoading();
+                
+                if (isNewUser) {
+                    showAlert('otpAlert', 'Account created successfully!', 'success');
+                    setTimeout(() => {
+                        showAppConnectionPage();
+                    }, 1000);
+                } else {
+                    // Existing user - load their connected apps
+                    currentUser = { name: 'Demo User', email: 'demo@example.com', mobile: currentMobile };
+                    connectedAppsData = ['whatsapp', 'messages']; // Demo connected apps
+                    showAlert('otpAlert', 'Login successful!', 'success');
+                    setTimeout(() => {
+                        showDashboard();
+                    }, 1000);
+                }
+            }, 2000);
+        });
+
+        function resendOTP() {
+            showAlert('otpAlert', 'OTP resent successfully!', 'info');
+            console.log('Demo OTP: 123456');
+        }
+
+        // App connection functions
+        function connectApp(appType) {
+            if (connectedAppsData.includes(appType)) {
+                showAlert('connectionAlert', `${getAppName(appType)} is already connected!`, 'warning');
+                return;
+            }
+
+            showLoading(`Connecting to ${getAppName(appType)}...`);
+            
+            // 🔴 BACKEND INTEGRATION NEEDED - Replace this demo code
+            // Call your Python backend API to connect app and start monitoring
+            
+            async function connectApp(appType) {
+                const authToken = localStorage.getItem('authToken');
+    
+                if (!authToken) {
+                    showNotification('Please login first', 'error');
+                    return;
+                }
+
+                try {
+                // 🔴 CONNECT TO YOUR PYTHON BACKEND HERE
+                    const response = await fetch(`${API_BASE_URL}/fraud/connect-app`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({
+                            app_type: appType,
+                            user_id: currentUser.id
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        if (!connectedApps.includes(appType)) {
+                            connectedApps.push(appType);
+                        }
+            
+                        showNotification(`${appType} connected successfully!`, 'success');
+                        updateConnectedAppsDisplay();
+            
+                        // Start monitoring for this app
+                            startRealTimeMonitoring(appType);
+                    } else {
+                        showNotification(data.detail || 'Connection failed', 'error');
+                    }
+                } catch (error) {
+                    console.error('App connection error:', error);
+                    showNotification('Network error. Please try again.', 'error');
+                }
+            }
+            
+            // DEMO CODE - Remove in production
+            setTimeout(() => {
+                hideLoading();
+                connectedAppsData.push(appType);
+                
+                // Update UI
+                const appCard = document.querySelector(`[onclick="connectApp('${appType}')"]`);
+                appCard.classList.add('connected');
+                
+                updateConnectionStats();
+                updateProtectionStatus();
+                
+                showAlert('connectionAlert', `${getAppName(appType)} connected successfully! Protection is now active.`, 'success');
+                
+                // Show dashboard button if at least one app is connected
+                if (connectedAppsData.length > 0) {
+                    document.getElementById('dashboardBtn').style.display = 'block';
+                }
+            }, 2000);
+        }
+
+        function getAppName(appType) {
+            const names = {
+                'whatsapp': 'WhatsApp',
+                'messages': 'SMS Messages',
+                'gallery': 'Gallery',
+                'telegram': 'Telegram',
+                'email': 'Email',
+                'instagram': 'Instagram'
+            };
+            return names[appType] || appType;
+        }
+
+        function updateConnectionStats() {
+            document.getElementById('connectedApps').textContent = connectedAppsData.length;
+            document.getElementById('protectedMessages').textContent = connectedAppsData.length * 45;
+            document.getElementById('threatsBlocked').textContent = Math.floor(connectedAppsData.length * 3.2);
+            document.getElementById('protectionRate').textContent = connectedAppsData.length > 0 ? '94%' : '0%';
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('dashConnectedApps').textContent = connectedAppsData.length;
+            document.getElementById('dashProtectedMessages').textContent = 247 + (connectedAppsData.length * 45);
+            document.getElementById('dashThreatsBlocked').textContent = 23 + Math.floor(connectedAppsData.length * 3.2);
+            document.getElementById('dashProtectionRate').textContent = connectedAppsData.length > 0 ? '93%' : '0%';
+        }
+
+        function updateProtectionStatus() {
+            const statusElement = document.getElementById('protectionStatus');
+            if (connectedAppsData.length > 0) {
+                statusElement.classList.add('active');
+                statusElement.innerHTML = `
+                    <div class="status-icon">✅</div>
+                    <div class="status-text">Protection Active</div>
+                    <div class="status-description">${connectedAppsData.length} app(s) connected and being monitored for fraud</div>
+                `;
+            }
+        }
+
+        // Real-time monitoring
+        function startRealTimeMonitoring() {
+            // 🔴 BACKEND INTEGRATION NEEDED - Replace this demo code
+            // Connect to your Python backend WebSocket or Server-Sent Events for real-time update
+
+            let websocket = null;
+
+            function startRealTimeMonitoring(appType) {
+                const authToken = localStorage.getItem('authToken');
+    
+                if (websocket) {
+                    websocket.close();
+                }
+
+                // 🔴 CONNECT TO YOUR PYTHON BACKEND WEBSOCKET HERE
+                websocket = new WebSocket(`${WS_URL}/monitoring?token=${authToken}&app=${appType}`);
+    
+                websocket.onopen = function(event) {
+                    console.log('WebSocket connected for', appType);
+                    showNotification(`Real-time monitoring started for ${appType}`, 'success');
+                };
+    
+                websocket.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+        
+                    // Update fraud detection display
+                    if (data.type === 'fraud_detection') {
+                    addFraudDetectionLog(data);
+                    } else if (data.type === 'transaction_analysis') {
+                    updateTransactionAnalysis(data);
+                    }
+                };
+    
+                websocket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    showNotification('Connection error. Retrying...', 'error');
+                };
+    
+                websocket.onclose = function(event) {
+                    console.log('WebSocket closed');
+                    // Attempt to reconnect after 5 seconds
+                    setTimeout(() => startRealTimeMonitoring(appType), 5000);
+                };
+            }
+
+            function addFraudDetectionLog(data) {
+                const logContainer = document.getElementById('fraudLogs');
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${data.risk_level}`;
+                logEntry.innerHTML = `
+                    <div class="log-time">${new Date(data.timestamp).toLocaleTimeString()}</div>
+                    <div class="log-content">${data.message}</div>
+                    <div class="log-risk">Risk: ${data.fraud_score}%</div>
+                    <div class="log-action">${data.action}</div>
+                `;
+                logContainer.insertBefore(logEntry, logContainer.firstChild);
+            }
+            
+            // DEMO CODE - Remove in production
+            const activities = [
+                { type: 'safe', app: 'WhatsApp', content: 'message from Mom - Safe' },
+                { type: 'blocked', app: 'SMS', content: 'from unknown number - BLOCKED (Lottery scam detected)' },
+                { type: 'safe', app: 'Email', content: 'from bank - Safe' },
+                { type: 'blocked', app: 'Telegram', content: 'message - BLOCKED (Fake certificate offer)' },
+                { type: 'safe', app: 'Instagram', content: 'message from friend - Safe' },
+                { type: 'blocked', app: 'WhatsApp', content: 'from unknown contact - BLOCKED (Investment scam)' },
+                { type: 'safe', app: 'SMS', content: 'delivery notification - Safe' }
+            ];
+
+            let activityIndex = 0;
+            setInterval(() => {
+                if (document.getElementById('dashboardPage').classList.contains('hidden')) return;
+                
+                const activity = activities[activityIndex % activities.length];
+                addActivityToLog(activity);
+                activityIndex++;
+            }, 15000); // Add new activity every 15 seconds
+        }
+        
+        function addActivityToLog(activity) {
+            const activityLog = document.getElementById('activityLog');
+            
+            const newActivity = document.createElement('div');
+            newActivity.className = `activity-item ${activity.type === 'blocked' ? 'blocked' : ''}`;
+            newActivity.innerHTML = `
+                <div class="activity-time">Just now</div>
+                <div class="activity-content">${activity.type === 'safe' ? '✅' : '🚫'} ${activity.app} ${activity.content}</div>
+            `;
+            
+            activityLog.insertBefore(newActivity, activityLog.firstChild);
+            
+            // Remove old activities (keep only 10)
+            while (activityLog.children.length > 10) {
+                activityLog.removeChild(activityLog.lastChild);
+            }
+            
+            // Update timestamps
+            const timeElements = activityLog.querySelectorAll('.activity-time');
+            timeElements.forEach((el, index) => {
+                if (index === 0) {
+                    el.textContent = 'Just now';
+                } else {
+                    el.textContent = `${index * 3 + 2} minutes ago`;
+                }
+            });
+        }
+
+        // Utility functions
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidMobile(mobile) {
+            const mobileRegex = /^(\+91|91)?[6-9]\d{9}$/;
+            return mobileRegex.test(mobile.replace(/\s/g, ''));
+        }
+
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function logout() {
+            currentUser = null;
+            currentMobile = '';
+            connectedAppsData = [];
+            isNewUser = false;
+            
+            // Reset all forms
+            document.getElementById('signupForm').reset();
+            document.getElementById('signinForm').reset();
+            document.getElementById('otpForm').reset();
+            
+            // Reset app cards
+            document.querySelectorAll('.app-card').forEach(card => {
+                card.classList.remove('connected');
+            });
+            
+            showWelcomePage();
+            showAlert('welcomePage', 'Logged out successfully', 'info');
+        }
+
+        // 🔴 BACKEND CONFIGURATION - Update these URLs to match your Python backend
+        const API_BASE_URL = 'https://demo-api.frauddetection.com';
+        const WS_URL = 'wss://demo-ws.frauddetection.com';
+        
+        // Helper function to get user authentication token
+        function getUserToken() {
+            // 🔴 IMPLEMENT: Return the JWT token or session token for authenticated requests
+            return localStorage.getItem('authToken') || '';
+        }
+        
+        // Helper function to save user authentication token
+        function saveUserToken(token) {
+            localStorage.setItem('authToken', token);
+        }
+        
+        // Helper function to make authenticated API calls
+        async function apiCall(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getUserToken()}`
+                }
+            };
+            
+            const finalOptions = {
+                ...defaultOptions,
+                ...options,
+                headers: {
+                    ...defaultOptions.headers,
+                    ...options.headers
+                }
+            };
+            
+            try {
+                const response = await fetch(url, finalOptions);
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('SatyaLens App Loaded Successfully!');
+            console.log('Demo OTP for testing: 123456');
+            console.log('🔴 BACKEND INTEGRATION POINTS MARKED - Search for "🔴" in code');
+            showWelcomePage();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9765940660d77eb6',t:'MTc1NjQwMjY2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

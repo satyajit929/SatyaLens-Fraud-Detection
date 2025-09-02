@@ -1,0 +1,38 @@
+# Production-optimized Dockerfile with Gunicorn
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN groupadd -r appgroup && \
+    useradd -r -g appgroup -d /app appuser
+
+WORKDIR /app
+
+# Copy and install requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application
+COPY --chown=appuser:appgroup . .
+
+# Create directories
+RUN mkdir -p logs models data && \
+    chown -R appuser:appgroup logs models data
+
+USER appuser
+
+EXPOSE 8000
+
+# Use Gunicorn for production
+CMD ["gunicorn", "app.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+
